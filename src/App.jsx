@@ -1,36 +1,43 @@
-import { useEffect, useState } from 'react'
-import LoadingScreen from './components/LoadingScreen'
+import { useState } from 'react'
 import Nav from './components/Nav'
+import TraceLine from './components/TraceLine'
 import Hero from './components/Hero'
-import About from './components/About'
+import Signals from './components/Signals'
+import Experience from './components/Experience'
 import Projects from './components/Projects'
-import Resume from './components/Resume'
+import About from './components/About'
 import Footer from './components/Footer'
+import CommandPalette from './components/CommandPalette'
 
 export default function App() {
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Lock scroll while loader is up
-    document.body.style.overflow = loading ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [loading])
+  const [paletteOpen, setPaletteOpen] = useState(false)
 
   return (
-    <>
-      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
-      <div className="bg-bg text-fg min-h-screen">
-        <Nav />
-        <main>
+    <div id="top" className="relative min-h-dvh bg-bg text-fg">
+      <a href="#main" className="skip-link">
+        skip to content
+      </a>
+      <Nav onOpenPalette={() => setPaletteOpen(true)} />
+
+      {/* Signature interaction — the scroll-drawn PCB trace layer */}
+      <TraceLine />
+
+      <div className="relative z-10">
+        <main id="main">
           <Hero />
-          <About />
+          <Signals />
+          <Experience />
           <Projects />
-          <Resume />
+          <About />
         </main>
         <Footer />
       </div>
-    </>
+
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onOpen={() => setPaletteOpen(true)}
+      />
+    </div>
   )
 }
