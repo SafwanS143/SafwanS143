@@ -17,6 +17,10 @@ export default function CommandPalette({ open, onClose, onOpen }) {
   const [active, setActive] = useState(0)
   const inputRef = useRef(null)
   const restoreRef = useRef(null)
+  // Chrome refires hover events when the DOM re-renders under a resting
+  // cursor, which would clobber arrow-key selection — only honor pointer
+  // hover when the pointer has actually moved.
+  const lastPointer = useRef([-1, -1])
   const reduced = useReducedMotion()
 
   const results = useMemo(() => {
@@ -56,13 +60,22 @@ export default function CommandPalette({ open, onClose, onOpen }) {
   }, [open])
 
   const run = (command) => {
-    onClose()
     if (command.action.jump) {
-      document.getElementById(command.action.jump)?.scrollIntoView({
-        behavior: reduced ? 'auto' : 'smooth',
-      })
-    } else if (command.action.href) {
-      window.open(command.action.href, '_blank', 'noopener,noreferrer')
+      // Focus moves to the target section (focus-follows-navigation);
+      // restoring it to the invoker would scroll back and cancel the jump.
+      restoreRef.current = null
+      onClose()
+      const el = document.getElementById(command.action.jump)
+      if (el) {
+        el.setAttribute('tabindex', '-1')
+        el.focus({ preventScroll: true })
+        el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
+      }
+    } else {
+      onClose()
+      if (command.action.href) {
+        window.open(command.action.href, '_blank', 'noopener,noreferrer')
+      }
     }
   }
 
@@ -144,7 +157,12 @@ export default function CommandPalette({ open, onClose, onOpen }) {
                   className={`flex cursor-pointer items-center justify-between gap-4 px-4 py-2.5 font-mono text-sm ${
                     i === active ? 'bg-raised text-fg' : 'text-muted'
                   }`}
-                  onMouseEnter={() => setActive(i)}
+                  onMouseMove={(e) => {
+                    if (e.clientX !== lastPointer.current[0] || e.clientY !== lastPointer.current[1]) {
+                      lastPointer.current = [e.clientX, e.clientY]
+                      setActive(i)
+                    }
+                  }}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => run(command)}
                 >

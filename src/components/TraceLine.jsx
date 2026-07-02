@@ -168,24 +168,28 @@ function buildPath(pts) {
 }
 
 // Piecewise-linear mapping: when node i sits at the viewport focal line,
-// the drawn length equals that node's position along the path.
+// the drawn length equals that node's position along the path. Inputs are
+// clamped to the scrollable range so the trace always completes at page
+// bottom (late waypoints would otherwise map past max scroll).
 function mapScrollToLength(geo, focal) {
+  const maxScroll = Math.max(geo.height - window.innerHeight, 1)
   const inputs = []
   const outputs = []
   let lastScroll = -Infinity
 
   geo.pts.forEach((p, i) => {
     const s = p.y - focal
-    if (s > lastScroll) {
+    if (s > lastScroll && s < maxScroll) {
       inputs.push(s)
       outputs.push(geo.nodeLengths[i])
       lastScroll = s
     }
   })
+  inputs.push(maxScroll)
+  outputs.push(geo.total)
 
-  // Ensure sane behavior above the first node and below the last.
   if (inputs.length < 2) {
-    return { inputs: [0, 1], outputs: [0, geo.total] }
+    return { inputs: [0, maxScroll], outputs: [0, geo.total] }
   }
   return { inputs, outputs }
 }
