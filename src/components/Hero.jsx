@@ -1,158 +1,108 @@
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
+import { EASE_OUT_EXPO } from '../lib/motion'
 
-const TAGLINE = 'Engineering systems that hold up under pressure.'
+const rise = (delay) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay, ease: EASE_OUT_EXPO },
+})
 
 export default function Hero() {
+  const reduced = useReducedMotion()
+  const anim = (delay) => (reduced ? {} : rise(delay))
+
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center pt-20 pb-24 overflow-hidden"
-    >
-      <div aria-hidden className="absolute inset-0 bg-grid opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
+    <section className="relative flex min-h-[92dvh] items-center overflow-hidden pb-20 pt-32">
+      <div className="bg-grid pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      <div className="relative mx-auto max-w-7xl w-full px-6 lg:px-10 grid lg:grid-cols-12 gap-10 items-end">
-        <div className="lg:col-span-8">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
-            className="font-mono text-xs uppercase tracking-[0.25em] text-fg-dim flex items-center gap-3"
-          >
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
-            <span>Online · Waterloo, ON</span>
-          </motion.div>
+      <div className="relative mx-auto w-full max-w-6xl px-5 md:px-8">
+        {/* Trace origin — the signal starts at the prompt */}
+        <motion.p {...anim(0)} className="label-mono mb-6 flex items-center gap-3 text-muted">
+          <span
+            data-trace-node
+            aria-hidden="true"
+            className="inline-block h-2.5 w-2.5 rounded-full border-2 border-copper bg-bg"
+          />
+          Site reliability · DevOps · Platform engineering
+        </motion.p>
 
-          <h1 className="mt-6 font-extrabold tracking-[-0.04em] leading-[0.92] text-[14vw] sm:text-[12vw] md:text-[9.5vw] lg:text-[8vw] xl:text-[8.5rem]">
-            <Reveal delay={0.5}>SAFWAN</Reveal>
-            <br />
-            <Reveal delay={0.6}>
-              SHIBLEE<span className="text-accent">.</span>
-            </Reveal>
-          </h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.85, ease: 'easeOut' }}
-            className="mt-8 font-mono text-sm md:text-base text-fg-muted"
-          >
-            <span className="text-accent">→</span> Mechatronics Engineering @ University of Waterloo
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.95, ease: 'easeOut' }}
-            className="mt-3 text-xl md:text-2xl text-fg max-w-2xl"
-          >
-            {TAGLINE}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.05, ease: 'easeOut' }}
-            className="mt-10 flex flex-wrap items-center gap-4"
-          >
-            <a
-              href="#projects"
-              className="group inline-flex items-center gap-3 bg-accent text-bg font-mono text-sm uppercase tracking-wider px-5 py-3 hover:bg-fg transition-colors"
-            >
-              View my work
-              <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-            </a>
-            <a
-              href="#resume"
-              className="group inline-flex items-center gap-3 border border-border-strong text-fg font-mono text-sm uppercase tracking-wider px-5 py-3 hover:border-accent hover:text-accent transition-colors"
-            >
-              View resume
-            </a>
-          </motion.div>
-        </div>
-
-        <motion.aside
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.15, ease: 'easeOut' }}
-          className="lg:col-span-4 hidden lg:block"
+        <motion.h1
+          {...anim(0.06)}
+          className="max-w-3xl text-[clamp(2.75rem,7vw,4.75rem)] font-bold leading-[1.05] tracking-tight text-fg"
         >
-          <div className="border border-border bg-surface/50 backdrop-blur-sm">
-            <div className="px-4 py-2.5 border-b border-border flex items-center justify-between font-mono text-xs text-fg-dim">
-              <span>~/system.info</span>
-              <span className="flex gap-1">
-                <span className="w-2 h-2 rounded-full bg-fg-dim/40" />
-                <span className="w-2 h-2 rounded-full bg-fg-dim/40" />
-                <span className="w-2 h-2 rounded-full bg-accent" />
-              </span>
-            </div>
-            <dl className="px-4 py-4 font-mono text-sm space-y-2">
-              <Row k="program" v="2B Mechatronics Eng" />
-              <Row k="school" v="UWaterloo" />
-              <Row k="gpa" v="3.7 / 4.0" />
-              <Row k="focus" v="SRE · DevOps · SWE" />
-              <Row k="status" v={<span className="text-accent">available</span>} />
-            </dl>
-          </div>
-        </motion.aside>
-      </div>
+          I build systems that{' '}
+          <span className="whitespace-nowrap text-signal">
+            stay up<span className="cursor-blink text-copper">_</span>
+          </span>
+        </motion.h1>
 
-      <motion.a
-        href="#about"
-        aria-label="Scroll to about section"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 1.4, ease: 'easeOut' }}
-        className="group absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5"
-      >
-        <span
-          aria-hidden
-          className="absolute -inset-x-14 -inset-y-10 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,0.32),transparent_70%)] blur-md opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none"
-        />
-        <span className="relative flex items-center justify-center w-10 h-10 rounded-full border border-accent/50 bg-bg/40 backdrop-blur-sm group-hover:border-accent group-hover:bg-accent/10 transition-colors">
-          <motion.svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-accent"
-            animate={{ y: [0, 4, 0, 4, 0] }}
-            transition={{ duration: 1.8, ease: 'easeInOut', delay: 1.8 }}
+        <motion.p {...anim(0.12)} className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+          Mechatronics Engineering @ University of Waterloo. I work across the
+          hardware/software boundary — bare-metal firmware to cloud
+          observability — and I care most about what happens{' '}
+          <span className="text-fg">after</span> deploy.
+        </motion.p>
+
+        {/* Incoming role — rendered as a scheduled deploy notification */}
+        <motion.div
+          {...anim(0.18)}
+          className="mt-10 max-w-md rounded-lg border border-amber/25 bg-surface shadow-card"
+        >
+          <div className="flex items-center gap-2.5 border-b border-border px-4 py-2.5">
+            <span aria-hidden="true" className="status-dot h-2 w-2 rounded-full bg-amber" />
+            <span className="label-mono text-amber">Scheduled deploy · Sep 2026</span>
+          </div>
+          <div className="px-4 py-3.5">
+            <p className="font-semibold text-fg">SRE Co-op — Magnet Forensics</p>
+            <p className="mt-1 font-mono text-xs text-muted">
+              site reliability engineering · Waterloo, ON · incoming
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div {...anim(0.24)} className="mt-10 flex flex-wrap items-center gap-4">
+          <a
+            href="#projects"
+            className="flex min-h-11 items-center rounded bg-signal px-5 font-mono text-sm font-semibold text-bg transition-transform duration-200 hover:-translate-y-0.5"
           >
-            <path d="M6 9l6 6 6-6" />
-          </motion.svg>
-        </span>
-        <span className="relative font-mono text-[10px] tracking-[0.3em] text-fg-muted group-hover:text-accent transition-colors">
-          SCROLL
-        </span>
-      </motion.a>
+            View work ↓
+          </a>
+          <a
+            href="https://github.com/SafwanS143"
+            target="_blank"
+            rel="noreferrer"
+            className="flex min-h-11 items-center gap-2 rounded border border-border px-4 font-mono text-sm text-muted transition-colors duration-200 hover:border-border-strong hover:text-fg"
+          >
+            <GitHubIcon />
+            GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/in/safwan-shiblee/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex min-h-11 items-center gap-2 rounded border border-border px-4 font-mono text-sm text-muted transition-colors duration-200 hover:border-border-strong hover:text-fg"
+          >
+            <LinkedInIcon />
+            LinkedIn
+          </a>
+        </motion.div>
+      </div>
     </section>
   )
 }
 
-function Row({ k, v }) {
+function GitHubIcon() {
   return (
-    <div className="flex items-baseline gap-3">
-      <dt className="text-fg-dim w-20 shrink-0">{k}</dt>
-      <dd className="text-fg flex-1 truncate">{v}</dd>
-    </div>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+    </svg>
   )
 }
 
-function Reveal({ children, delay = 0 }) {
+function LinkedInIcon() {
   return (
-    <span className="inline-block overflow-hidden align-baseline">
-      <motion.span
-        initial={{ y: '110%' }}
-        animate={{ y: '0%' }}
-        transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-        className="inline-block"
-      >
-        {children}
-      </motion.span>
-    </span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M13.63 13.63h-2.37V9.92c0-.89-.02-2.03-1.24-2.03-1.24 0-1.43.97-1.43 1.96v3.78H6.22V6h2.28v1.04h.03c.32-.6 1.09-1.24 2.25-1.24 2.4 0 2.85 1.58 2.85 3.64v4.19ZM3.54 4.96a1.38 1.38 0 1 1 0-2.75 1.38 1.38 0 0 1 0 2.75Zm1.19 8.67H2.35V6h2.38v7.63ZM14.82 0H1.18C.53 0 0 .52 0 1.16v13.68C0 15.48.53 16 1.18 16h13.64c.65 0 1.18-.52 1.18-1.16V1.16C16 .52 15.47 0 14.82 0Z" />
+    </svg>
   )
 }

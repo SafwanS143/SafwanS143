@@ -1,90 +1,114 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
 
 const LINKS = [
-  { id: 'about', label: 'About', index: '01' },
-  { id: 'projects', label: 'Projects', index: '02' },
-  { id: 'resume', label: 'Resume', index: '03' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'about', label: 'About' },
+  { id: 'contact', label: 'Contact' },
 ]
 
-export default function Nav() {
-  const [scrolled, setScrolled] = useState(false)
-  const [active, setActive] = useState('hero')
+export default function Nav({ onOpenPalette }) {
+  const [menuOpen, setMenuOpen] = useState(false)
 
+  // Close the mobile menu after any in-page navigation.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const ids = ['hero', 'about', 'projects', 'resume']
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id)
-        })
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
-    )
-    ids.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-    return () => observer.disconnect()
-  }, [])
+    if (!menuOpen) return
+    const close = () => setMenuOpen(false)
+    window.addEventListener('hashchange', close)
+    return () => window.removeEventListener('hashchange', close)
+  }, [menuOpen])
 
   return (
-    <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
-      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
-        scrolled
-          ? 'backdrop-blur-md bg-bg/75 border-b border-border'
-          : 'bg-transparent border-b border-transparent'
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 h-16 flex items-center justify-between">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg/85 backdrop-blur-md">
+      <nav
+        aria-label="Primary"
+        className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 md:px-8"
+      >
         <a
-          href="#hero"
-          className="group inline-flex items-center gap-2 font-mono text-sm tracking-wide"
-          aria-label="Home"
+          href="#top"
+          className="flex min-h-11 items-center gap-2.5 font-mono text-sm font-semibold tracking-tight text-fg"
         >
-          <span className="inline-block w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_rgba(34,211,238,0.7)]" />
-          <span className="text-fg group-hover:text-accent transition-colors">
-            safwan<span className="text-accent">.</span>shiblee
-          </span>
+          <span
+            aria-hidden="true"
+            className="status-dot inline-block h-2 w-2 rounded-full bg-signal"
+          />
+          safwan.shiblee
         </a>
 
-        <nav className="hidden md:flex items-center gap-1">
-          {LINKS.map((link) => (
+        <div className="hidden items-center gap-1 md:flex">
+          {LINKS.map(({ id, label }) => (
             <a
-              key={link.id}
-              href={`#${link.id}`}
-              className={`group relative px-3 py-2 font-mono text-xs tracking-wider uppercase transition-colors ${
-                active === link.id ? 'text-fg' : 'text-fg-muted hover:text-fg'
-              }`}
+              key={id}
+              href={`#${id}`}
+              className="flex min-h-11 items-center rounded px-3 font-mono text-[0.8125rem] text-muted transition-colors duration-200 hover:text-fg"
             >
-              <span className="text-accent mr-2">{link.index}</span>
-              {link.label}
-              <span
-                className={`absolute left-3 right-3 -bottom-px h-px origin-left transition-transform duration-300 bg-accent ${
-                  active === link.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                }`}
-              />
+              {label}
             </a>
           ))}
-        </nav>
+          <button
+            type="button"
+            onClick={onOpenPalette}
+            className="ml-2 flex min-h-9 cursor-pointer items-center gap-1.5 rounded border border-border px-2.5 font-mono text-xs text-muted transition-colors duration-200 hover:border-border-strong hover:text-fg"
+            aria-label="Open command palette"
+          >
+            <kbd className="text-[0.6875rem]">Ctrl</kbd>
+            <kbd className="text-[0.6875rem]">K</kbd>
+          </button>
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="ml-2 flex min-h-9 items-center rounded border border-signal/40 px-3.5 font-mono text-[0.8125rem] font-medium text-signal transition-colors duration-200 hover:border-signal hover:bg-signal-glow"
+          >
+            Resume
+          </a>
+        </div>
 
-        <a
-          href="#resume"
-          className="md:hidden font-mono text-xs uppercase tracking-wider text-accent border border-accent/40 px-3 py-1.5 hover:bg-accent hover:text-bg transition-colors"
+        <button
+          type="button"
+          className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded text-muted transition-colors hover:text-fg md:hidden"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen((v) => !v)}
         >
-          Resume
-        </a>
-      </div>
-    </motion.header>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            {menuOpen ? (
+              <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            ) : (
+              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {menuOpen && (
+        <div id="mobile-menu" className="border-t border-border bg-bg/95 px-5 py-3 backdrop-blur-md md:hidden">
+          <ul>
+            {LINKS.map(({ id, label }) => (
+              <li key={id}>
+                <a
+                  href={`#${id}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex min-h-11 items-center font-mono text-sm text-muted transition-colors hover:text-fg"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-11 items-center font-mono text-sm font-medium text-signal"
+              >
+                Resume
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
+    </header>
   )
 }

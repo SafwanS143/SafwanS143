@@ -1,39 +1,35 @@
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
+import { fadeRise, viewportOnce } from '../lib/motion'
 
-export default function SectionHeading({ index, eyebrow, title, children }) {
+// Runbook-style section header: `01 / EXPERIENCE` + display title.
+// The small pad next to the index is a waypoint for the scroll trace.
+export default function SectionHeading({ index, label, title, description }) {
+  const reduced = useReducedMotion()
+
   return (
-    <div className="mb-12 lg:mb-16">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="font-mono text-xs uppercase tracking-[0.2em] text-fg-dim flex items-center gap-3"
-      >
-        <span className="text-accent">{index}</span>
-        <span className="h-px w-8 bg-border" />
-        <span>{eyebrow}</span>
-      </motion.div>
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, delay: 0.05, ease: 'easeOut' }}
-        className="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight"
-      >
+    <motion.header
+      className="mb-12 md:mb-16"
+      variants={fadeRise}
+      initial={reduced ? false : 'hidden'}
+      whileInView="visible"
+      viewport={viewportOnce}
+    >
+      <p className="label-mono mb-3 flex items-center gap-3 text-muted">
+        <span
+          data-trace-node
+          aria-hidden="true"
+          className="inline-block h-2 w-2 rounded-full border border-copper bg-bg"
+        />
+        <span>
+          <span className="text-copper">{index}</span> / {label}
+        </span>
+      </p>
+      <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-fg md:text-4xl">
         {title}
-      </motion.h2>
-      {children && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
-          className="mt-4 text-fg-muted max-w-2xl"
-        >
-          {children}
-        </motion.div>
+      </h2>
+      {description && (
+        <p className="mt-4 max-w-xl leading-relaxed text-muted">{description}</p>
       )}
-    </div>
+    </motion.header>
   )
 }

@@ -1,46 +1,67 @@
 const LINKS = [
   { label: 'GitHub', href: 'https://github.com/SafwanS143' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/safwan-shiblee/' },
-  { label: 'Email', href: 'mailto:sshiblee@uwaterloo.ca' },
+  { label: 'Resume', href: '/resume.pdf' },
 ]
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border mt-12">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-12 grid sm:grid-cols-2 gap-8 items-start">
-        <div>
+    <footer id="contact" className="border-t border-border">
+      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <p className="label-mono mb-3 text-muted">
+          <span className="text-copper">04</span> / Contact
+        </p>
+        <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-fg md:text-4xl">
+          Open a connection
+        </h2>
+        <p className="mt-4 max-w-md leading-relaxed text-muted">
+          Co-op terms, SRE and platform work, or anything across the
+          hardware/software boundary — my inbox is monitored 24/7.
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center gap-4">
           <a
-            href="#hero"
-            className="inline-flex items-center gap-2 font-mono text-sm group"
+            href="mailto:sshiblee@uwaterloo.ca"
+            className="flex min-h-11 items-center rounded bg-signal px-5 font-mono text-sm font-semibold text-bg transition-transform duration-200 hover:-translate-y-0.5"
           >
-            <span className="inline-block w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_rgba(34,211,238,0.7)]" />
-            <span className="text-fg group-hover:text-accent transition-colors">
-              safwan<span className="text-accent">.</span>shiblee
-            </span>
+            sshiblee@uwaterloo.ca
           </a>
-          <p className="mt-4 text-sm text-fg-muted max-w-sm">
-            Built with React, Vite, Tailwind v4, and Motion. Designed and shipped from Waterloo, ON.
-          </p>
+          {LINKS.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-11 items-center rounded border border-border px-4 font-mono text-sm text-muted transition-colors duration-200 hover:border-border-strong hover:text-fg"
+            >
+              {label}
+            </a>
+          ))}
         </div>
 
-        <div className="sm:text-right">
-          <ul className="flex flex-wrap sm:justify-end gap-x-6 gap-y-2 font-mono text-xs uppercase tracking-wider">
-            {LINKS.map((l) => (
-              <li key={l.label}>
-                <a
-                  href={l.href}
-                  target={l.href.startsWith('http') ? '_blank' : undefined}
-                  rel="noreferrer noopener"
-                  className="text-fg-muted hover:text-accent transition-colors"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-dim">
-            © {new Date().getFullYear()} Safwan Shiblee · All rights reserved
-          </p>
+        {/* The trace terminates into ground */}
+        <div className="mt-16 flex justify-center" aria-hidden="true">
+          <div className="flex flex-col items-center gap-1.5">
+            <span
+              data-trace-node
+              className="inline-block h-2.5 w-2.5 rounded-full border-2 border-copper bg-bg"
+            />
+            <svg width="28" height="18" viewBox="0 0 28 18" fill="none" className="text-copper">
+              <path d="M14 0v6M4 7h20M8 12h12M11.5 17h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Terminal status bar */}
+      <div className="border-t border-border bg-surface">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-5 py-3 font-mono text-xs text-dim md:px-8">
+          <span>© 2026 Safwan Shiblee</span>
+          <span className="flex items-center gap-2">
+            <span aria-hidden="true" className="status-dot inline-block h-1.5 w-1.5 rounded-full bg-signal" />
+            <span className="text-muted">all systems nominal</span>
+          </span>
+          <span>React · Vite · GitHub Pages</span>
         </div>
       </div>
     </footer>
