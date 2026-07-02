@@ -1,71 +1,52 @@
-import { motion } from 'motion/react'
-import { MOTIFS } from './motifs/Motifs'
+import { motion, useReducedMotion } from 'motion/react'
 import { GITHUB_USERNAME } from '../data/projects'
+import { fadeRise } from '../lib/motion'
 
-export default function ProjectCard({ project, live, index }) {
-  const Motif = MOTIFS[project.motif]
-  const url = live?.html_url ?? `https://github.com/${GITHUB_USERNAME}/${project.repo}`
-  const stars = live?.stars
-  const updated = live?.updatedAt ? formatRelative(live.updatedAt) : null
+export default function ProjectCard({ project, index }) {
+  const reduced = useReducedMotion()
+  const accent = project.accent === 'copper' ? 'group-hover:border-copper/50' : 'group-hover:border-signal/50'
 
   return (
-    <motion.a
-      href={url}
-      target="_blank"
-      rel="noreferrer noopener"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.5, delay: index * 0.05, ease: 'easeOut' }}
-      whileHover={{ y: -4 }}
-      className="group relative flex flex-col border border-border bg-surface hover:border-accent/60 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.25),0_24px_48px_-24px_rgba(34,211,238,0.25)] transition-[border,box-shadow] duration-300"
+    <motion.article
+      variants={fadeRise}
+      className={`group relative flex h-full flex-col rounded-lg border border-border bg-surface p-6 shadow-card transition-[border-color,transform] duration-200 ${accent} ${
+        reduced ? '' : 'hover:-translate-y-1'
+      }`}
     >
-      {Motif && <Motif />}
-
-      <div className="flex-1 flex flex-col p-6">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-lg font-semibold tracking-tight text-fg group-hover:text-accent transition-colors">
-            {project.name}
-          </h3>
-          <span className="font-mono text-xs text-fg-dim shrink-0 mt-1 group-hover:text-accent transition-colors">
-            ↗
-          </span>
-        </div>
-
-        <p className="mt-2 text-sm text-fg-muted leading-relaxed line-clamp-4">
-          {live?.description || project.blurb}
-        </p>
-
-        <div className="mt-5 flex flex-wrap gap-1.5">
-          {project.tags.map((t) => (
-            <span
-              key={t}
-              className="font-mono text-[10px] uppercase tracking-wider text-fg-muted border border-border px-2 py-1"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between font-mono text-[11px] text-fg-dim">
-          <span className="truncate">{project.repo}</span>
-          <span className="flex items-center gap-3">
-            {typeof stars === 'number' && stars > 0 && <span>★ {stars}</span>}
-            {updated && <span>{updated}</span>}
-          </span>
-        </div>
+      <div className="flex items-start justify-between gap-3">
+        <p className="label-mono text-dim">{String(index + 2).padStart(2, '0')}</p>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+          className="text-dim transition-colors duration-200 group-hover:text-fg"
+        >
+          <path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
-    </motion.a>
-  )
-}
 
-function formatRelative(iso) {
-  const then = new Date(iso).getTime()
-  const diff = Date.now() - then
-  const day = 1000 * 60 * 60 * 24
-  if (diff < day) return 'today'
-  if (diff < day * 2) return 'yesterday'
-  if (diff < day * 30) return `${Math.floor(diff / day)}d ago`
-  if (diff < day * 365) return `${Math.floor(diff / (day * 30))}mo ago`
-  return `${Math.floor(diff / (day * 365))}y ago`
+      <h4 className="mt-3 text-lg font-semibold text-fg">
+        <a
+          href={`https://github.com/${GITHUB_USERNAME}/${project.repo}`}
+          target="_blank"
+          rel="noreferrer"
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          {project.name}
+        </a>
+      </h4>
+
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{project.blurb}</p>
+
+      <ul className="mt-5 flex flex-wrap gap-2" aria-label={`${project.name} technologies`}>
+        {project.tags.map((tag) => (
+          <li key={tag} className="rounded-sm border border-border px-2 py-0.5 font-mono text-xs text-muted">
+            {tag}
+          </li>
+        ))}
+      </ul>
+    </motion.article>
+  )
 }
