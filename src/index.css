@@ -20,7 +20,7 @@
   /* Text */
   --color-fg: #e6edf7;
   --color-muted: #8b98ac;
-  --color-dim: #5c6a80;
+  --color-dim: #7f8da3; /* 5.3:1 on surface — keep ≥4.5:1 (WCAG AA) */
 
   /* Signal green — healthy / live / CTA */
   --color-signal: #4ade80;
