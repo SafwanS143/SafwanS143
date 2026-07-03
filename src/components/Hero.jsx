@@ -55,7 +55,7 @@ export default function Hero() {
           <div className="px-4 py-3.5">
             <p className="font-semibold text-fg">SRE Co-op — Magnet Forensics</p>
             <p className="mt-1 font-mono text-xs text-muted">
-              site reliability engineering · Waterloo, ON · incoming
+              Site Reliability Engineering · Waterloo, ON · incoming
             </p>
           </div>
         </motion.div>
