@@ -16,12 +16,12 @@ export default function Hero() {
       <div className="bg-grid pointer-events-none absolute inset-0" aria-hidden="true" />
 
       <div className="relative mx-auto w-full max-w-6xl px-5 md:px-8">
-        {/* Trace origin — the signal starts at the prompt */}
-        <motion.p {...anim(0)} className="label-mono mb-6 flex items-center gap-3 text-muted">
+        {/* Trace origin — the signal starts beside the prompt, in the gutter */}
+        <motion.p {...anim(0)} className="label-mono relative mb-6 text-muted">
           <span
             data-trace-node
             aria-hidden="true"
-            className="inline-block h-2.5 w-2.5 rounded-full border-2 border-copper bg-bg"
+            className="absolute -left-3.5 top-1/2 inline-block h-2.5 w-2.5 -translate-y-1/2 rounded-full border-2 border-copper bg-bg md:-left-12"
           />
           Site reliability · DevOps · Platform engineering
         </motion.p>

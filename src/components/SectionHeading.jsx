@@ -14,11 +14,12 @@ export default function SectionHeading({ index, label, title, description }) {
       whileInView="visible"
       viewport={viewportOnce}
     >
-      <p className="label-mono mb-3 flex items-center gap-3 text-muted">
+      <p className="label-mono relative mb-3 text-muted">
+        {/* Solder pad hangs in the left gutter so the trace clears the text */}
         <span
           data-trace-node
           aria-hidden="true"
-          className="inline-block h-2 w-2 rounded-full border border-copper bg-bg"
+          className="absolute -left-3.5 top-1/2 inline-block h-2.5 w-2.5 -translate-y-1/2 rounded-full border-2 border-copper bg-bg md:-left-12"
         />
         <span>
           <span className="text-copper">{index}</span> / {label}

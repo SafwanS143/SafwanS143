@@ -38,22 +38,20 @@ function TimelineItem({ job }) {
   return (
     <motion.li
       ref={ref}
-      className="grid grid-cols-[auto_1fr] gap-x-5 md:gap-x-8"
+      className="relative"
       variants={fadeRise}
       initial={reduced ? false : 'hidden'}
       whileInView="visible"
       viewport={viewportOnce}
     >
-      {/* Solder-pad marker — a waypoint on the scroll trace */}
-      <span className="flex w-2.5 justify-center pt-1.5">
-        <span
-          data-trace-node
-          aria-hidden="true"
-          className={`inline-block h-2.5 w-2.5 rounded-full border-2 transition-colors duration-500 ${
-            on ? litColor : 'border-copper bg-bg'
-          }`}
-        />
-      </span>
+      {/* Solder-pad marker — a trace waypoint, hanging in the left gutter */}
+      <span
+        data-trace-node
+        aria-hidden="true"
+        className={`absolute -left-3.5 top-2 inline-block h-2.5 w-2.5 rounded-full border-2 transition-colors duration-500 md:-left-12 ${
+          on ? litColor : 'border-copper bg-bg'
+        }`}
+      />
 
       <div className="pb-14">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

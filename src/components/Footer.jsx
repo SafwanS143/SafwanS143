@@ -39,9 +39,11 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* The trace terminates into ground */}
-        <div className="mt-16 flex justify-center" aria-hidden="true">
-          <div className="flex flex-col items-center gap-1.5">
+        {/* The trace terminates into ground, staying in the left gutter */}
+        <div className="relative mt-16 h-10" aria-hidden="true">
+          {/* Column is 28px wide; offsets center its pad on the gutter line
+              shared by all trace waypoints (-9px mobile, -43px desktop). */}
+          <div className="absolute -left-[23px] top-0 flex w-7 flex-col items-center gap-1.5 md:-left-[57px]">
             <span
               data-trace-node
               className="inline-block h-2.5 w-2.5 rounded-full border-2 border-copper bg-bg"
