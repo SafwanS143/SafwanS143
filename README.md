@@ -1,6 +1,6 @@
 # Safwan Shiblee
 
-**Mechatronics Engineering** @ University of Waterloo · 2B · GPA `3.7 / 4.0`
+**Mechatronics Engineering** @ University of Waterloo · 3rd year
 
 _Engineering systems that hold up under pressure_
 
