@@ -1,96 +1,108 @@
-import { motion, useReducedMotion } from 'motion/react'
-import SectionHeading from './SectionHeading'
-import { fadeRise, staggerChildren, viewportOnce } from '../lib/motion'
+import { useRef } from 'react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import Reveal from './Reveal'
 
-// Grouped like silkscreen labels on a board — sourced from the resume.
+const STATEMENT =
+  "I'm a Mechatronics Engineering student at the University of Waterloo. The degree runs from circuits to control systems to software, and the place where those layers meet is where I like to work. In every role, I keep gravitating toward the same problems: what breaks, how you notice, and how the system heals itself."
+
+const FACTS = [
+  { value: '3.7', label: 'GPA, Mechatronics Engineering' },
+  { value: '2029', label: 'Expected graduation' },
+  { value: 'Distinction', label: "President's Scholarship" },
+]
+
+// Grouped from the résumé, plus the platform stack Fleetwright ships on.
 const SKILLS = [
   {
     group: 'DevOps & Cloud',
-    items: ['Docker', 'Terraform', 'AWS', 'GCP', 'GitHub Actions', 'Jenkins', 'nginx', 'Linux'],
+    items: ['Docker', 'Kubernetes', 'EKS', 'Helm', 'Argo CD', 'Terraform', 'AWS', 'GCP', 'GitHub Actions', 'Jenkins', 'Linux'],
   },
   {
     group: 'Observability & SRE',
-    items: ['Prometheus', 'Grafana', 'SonarQube', 'anomaly detection', 'structured logging', 'self-healing systems'],
+    items: ['Prometheus', 'Grafana', 'Alertmanager', 'SLOs & error budgets', 'Anomaly detection', 'Structured logging', 'Self-healing systems'],
   },
   {
     group: 'Languages',
-    items: ['Python', 'TypeScript / JS', 'C / C++', 'C#', 'Dart', 'PowerShell', 'SQL'],
+    items: ['Python', 'TypeScript / JavaScript', 'C / C++', 'C#', 'Java', 'Dart', 'PowerShell', 'SQL'],
   },
   {
     group: 'Frameworks & Data',
-    items: ['ASP.NET Core', 'FastAPI', 'React / Next.js', 'Flask', 'Flutter', 'PostgreSQL', 'SQLite'],
+    items: ['ASP.NET Core', 'FastAPI', 'React / Next.js', 'Flask', 'Flutter', 'PostgreSQL', 'SQLite', 'MQTT'],
   },
 ]
 
 export default function About() {
-  const reduced = useReducedMotion()
-
   return (
-    <section id="about" className="scroll-mt-20 py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <SectionHeading
-          index="03"
-          label="About"
-          title="The boundary is the interesting part"
-        />
+    <section id="about" aria-labelledby="about-title" className="tone-dark scroll-mt-[52px] py-28 md:py-40">
+      <div className="mx-auto max-w-[1080px] px-6">
+        <h2 id="about-title" className="t-eyebrow text-fg-2">
+          About
+        </h2>
+        <ScrollText text={STATEMENT} />
 
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div
-            className="space-y-5 leading-relaxed text-muted"
-            variants={fadeRise}
-            initial={reduced ? false : 'hidden'}
-            whileInView="visible"
-            viewport={viewportOnce}
-          >
-            <p>
-              I'm a Mechatronics Engineering student at the University of
-              Waterloo (GPA 3.7, President's Scholarship of Distinction). The
-              degree spans circuits to control systems to software — and the
-              place where those layers meet is where I like to work.
-            </p>
-            <p>
-              Across four co-ops I've written bare-metal firmware, hardened
-              cross-platform auth flows, operated election-data infrastructure,
-              and built notification platforms with retry budgets and
-              structured logging. The through-line: I keep gravitating toward
-              the <span className="text-fg">reliability</span> problems — what
-              breaks, how you notice, and how the system heals itself.
-            </p>
-            <p>
-              That's the direction I'm heading deliberately: site reliability
-              and platform engineering, next at{' '}
-              <span className="text-fg">Magnet Forensics</span> as an SRE co-op
-              in September 2026. This site follows the same philosophy —
-              static, fast, no runtime dependencies, nothing to page anyone
-              about.
-            </p>
-          </motion.div>
+        <Reveal group className="mt-20 grid gap-8 border-t border-hairline pt-10 sm:grid-cols-3 md:mt-28">
+          {FACTS.map((f) => (
+            <Reveal.Item key={f.label}>
+              <p className="text-gradient-blue text-[clamp(2.25rem,4.5vw,3.25rem)] font-bold leading-none tracking-[-0.045em]">
+                {f.value}
+              </p>
+              <p className="mt-3 text-[1rem] text-fg-2">{f.label}</p>
+            </Reveal.Item>
+          ))}
+        </Reveal>
 
-          <motion.div
-            className="grid gap-8 sm:grid-cols-2"
-            variants={staggerChildren(0.05)}
-            initial={reduced ? false : 'hidden'}
-            whileInView="visible"
-            viewport={viewportOnce}
-          >
+        <div className="mt-28 md:mt-40">
+          <Reveal as="h3" className="t-headline text-fg">
+            Toolkit.
+          </Reveal>
+          <Reveal group className="mt-10 grid gap-10 sm:grid-cols-2 md:mt-14 lg:grid-cols-4">
             {SKILLS.map(({ group, items }) => (
-              <motion.div key={group} variants={fadeRise}>
-                <h3 className="label-mono mb-3 text-copper">{group}</h3>
-                <ul className="flex flex-wrap gap-2">
+              <Reveal.Item key={group} className="border-t border-hairline pt-6">
+                <h4 className="text-[1.0625rem] font-semibold text-fg">{group}</h4>
+                <ul className="mt-4 space-y-2">
                   {items.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-sm border border-border px-2 py-0.5 font-mono text-xs text-muted"
-                    >
+                    <li key={item} className="text-[0.9375rem] text-fg-2">
                       {item}
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </Reveal.Item>
             ))}
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>
+  )
+}
+
+// Words brighten one by one as the paragraph scrolls through the viewport.
+function ScrollText({ text }) {
+  const ref = useRef(null)
+  const reduced = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 55%'] })
+  const words = text.split(' ')
+
+  return (
+    <p
+      ref={ref}
+      className="mt-6 text-[clamp(1.75rem,4.2vw,3.25rem)] font-semibold leading-[1.18] tracking-[-0.035em] text-fg"
+    >
+      {reduced
+        ? text
+        : words.map((w, i) => (
+            <Word key={i} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]}>
+              {w}
+            </Word>
+          ))}
+    </p>
+  )
+}
+
+function Word({ children, progress, range }) {
+  const opacity = useTransform(progress, range, [0.2, 1])
+  return (
+    <>
+      <motion.span style={{ opacity }}>{children}</motion.span>{' '}
+    </>
   )
 }

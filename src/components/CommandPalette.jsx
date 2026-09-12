@@ -1,24 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { ArrowUpRight, DocIcon, GitHubIcon, LinkedInIcon, MailIcon, SearchIcon } from './icons'
+
+const Hash = () => <span className="text-[0.9375rem] font-semibold leading-none">#</span>
 
 const COMMANDS = [
-  { id: 'experience', label: 'Go to Experience', hint: 'section', action: { jump: 'experience' } },
-  { id: 'projects', label: 'Go to Projects', hint: 'section', action: { jump: 'projects' } },
-  { id: 'about', label: 'Go to About', hint: 'section', action: { jump: 'about' } },
-  { id: 'contact', label: 'Go to Contact', hint: 'section', action: { jump: 'contact' } },
-  { id: 'github', label: 'Open GitHub', hint: 'github.com/SafwanS143', action: { href: 'https://github.com/SafwanS143' } },
-  { id: 'linkedin', label: 'Open LinkedIn', hint: 'linkedin.com/in/safwan-shiblee', action: { href: 'https://www.linkedin.com/in/safwan-shiblee/' } },
-  { id: 'resume', label: 'Open Resume', hint: 'pdf', action: { href: '/resume.pdf' } },
-  { id: 'email', label: 'Send Email', hint: 'sshiblee@uwaterloo.ca', action: { href: 'mailto:sshiblee@uwaterloo.ca' } },
+  { id: 'experience', label: 'Experience', hint: 'Section', icon: Hash, action: { jump: 'experience' } },
+  { id: 'fleetwright', label: 'Fleetwright', hint: 'Featured project', icon: Hash, action: { jump: 'fleetwright' } },
+  { id: 'projects', label: 'Projects', hint: 'Section', icon: Hash, action: { jump: 'projects' } },
+  { id: 'about', label: 'About', hint: 'Section', icon: Hash, action: { jump: 'about' } },
+  { id: 'contact', label: 'Contact', hint: 'Section', icon: Hash, action: { jump: 'contact' } },
+  { id: 'fw-repo', label: 'Fleetwright on GitHub', hint: 'github.com', icon: GitHubIcon, action: { href: 'https://github.com/SafwanS143/Fleetwright' } },
+  { id: 'github', label: 'GitHub', hint: 'SafwanS143', icon: GitHubIcon, action: { href: 'https://github.com/SafwanS143' } },
+  { id: 'linkedin', label: 'LinkedIn', hint: 'safwan-shiblee', icon: LinkedInIcon, action: { href: 'https://www.linkedin.com/in/safwan-shiblee/' } },
+  { id: 'resume', label: 'Résumé', hint: 'PDF', icon: DocIcon, action: { href: '/resume.pdf' } },
+  { id: 'email', label: 'Send an email', hint: 'sshiblee@uwaterloo.ca', icon: MailIcon, action: { href: 'mailto:sshiblee@uwaterloo.ca' } },
 ]
 
+// Spotlight-style quick navigation. Ctrl/⌘ K toggles, Esc closes.
 export default function CommandPalette({ open, onClose, onOpen }) {
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const inputRef = useRef(null)
   const restoreRef = useRef(null)
   // Chrome refires hover events when the DOM re-renders under a resting
-  // cursor, which would clobber arrow-key selection — only honor pointer
+  // cursor, which would clobber arrow-key selection, only honor pointer
   // hover when the pointer has actually moved.
   const lastPointer = useRef([-1, -1])
   const reduced = useReducedMotion()
@@ -26,12 +32,9 @@ export default function CommandPalette({ open, onClose, onOpen }) {
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return COMMANDS
-    return COMMANDS.filter(
-      (c) => c.label.toLowerCase().includes(q) || c.hint.toLowerCase().includes(q)
-    )
+    return COMMANDS.filter((c) => c.label.toLowerCase().includes(q) || c.hint.toLowerCase().includes(q))
   }, [query])
 
-  // Global shortcut — Ctrl/Cmd+K toggles, Esc closes.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -61,8 +64,8 @@ export default function CommandPalette({ open, onClose, onOpen }) {
 
   const run = (command) => {
     if (command.action.jump) {
-      // Focus moves to the target section (focus-follows-navigation);
-      // restoring it to the invoker would scroll back and cancel the jump.
+      // Focus follows navigation; restoring it to the invoker would scroll
+      // back and cancel the jump.
       restoreRef.current = null
       onClose()
       const el = document.getElementById(command.action.jump)
@@ -73,9 +76,7 @@ export default function CommandPalette({ open, onClose, onOpen }) {
       }
     } else {
       onClose()
-      if (command.action.href) {
-        window.open(command.action.href, '_blank', 'noopener,noreferrer')
-      }
+      window.open(command.action.href, '_blank', 'noopener,noreferrer')
     }
   }
 
@@ -90,7 +91,6 @@ export default function CommandPalette({ open, onClose, onOpen }) {
       e.preventDefault()
       run(results[active])
     } else if (e.key === 'Tab') {
-      // Single-focus dialog: keep focus on the input.
       e.preventDefault()
     }
   }
@@ -99,11 +99,11 @@ export default function CommandPalette({ open, onClose, onOpen }) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-bg/70 px-4 pt-[18vh] backdrop-blur-sm"
+          className="tone-dark fixed inset-0 z-50 flex items-start justify-center !bg-black/45 px-4 pt-[16vh]"
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={reduced ? undefined : { opacity: 0 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
+          transition={{ duration: 0.2 }}
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) onClose()
           }}
@@ -111,17 +111,15 @@ export default function CommandPalette({ open, onClose, onOpen }) {
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Command palette"
-            className="w-full max-w-lg overflow-hidden rounded-lg border border-border-strong bg-surface shadow-card"
-            initial={reduced ? false : { opacity: 0, scale: 0.97, y: -8 }}
+            aria-label="Search"
+            className="glass w-full max-w-[640px] overflow-hidden rounded-[22px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.12)]"
+            initial={reduced ? false : { opacity: 0, scale: 0.96, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={reduced ? undefined : { opacity: 0, scale: 0.97, y: -8 }}
-            transition={{ duration: 0.16, ease: 'easeOut' }}
+            exit={reduced ? undefined : { opacity: 0, scale: 0.97, y: -6 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 32, mass: 0.8 }}
           >
-            <div className="flex items-center gap-3 border-b border-border px-4">
-              <span className="font-mono text-sm text-signal" aria-hidden="true">
-                &gt;
-              </span>
+            <div className="flex items-center gap-3 px-5">
+              <SearchIcon size={22} className="shrink-0 text-fg-2" />
               <input
                 ref={inputRef}
                 type="text"
@@ -129,47 +127,60 @@ export default function CommandPalette({ open, onClose, onOpen }) {
                 aria-expanded="true"
                 aria-controls="palette-listbox"
                 aria-activedescendant={results[active] ? `palette-${results[active].id}` : undefined}
-                aria-label="Type a command"
-                placeholder="Type a command…"
+                aria-label="Search this site"
+                placeholder="Search this site"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
                   setActive(0)
                 }}
                 onKeyDown={onInputKeyDown}
-                className="min-h-12 w-full bg-transparent font-mono text-sm text-fg outline-none placeholder:text-dim"
+                className="min-h-16 w-full bg-transparent text-[1.375rem] font-normal tracking-[-0.02em] text-fg outline-none placeholder:text-fg-3 focus-visible:outline-none"
               />
-              <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[0.625rem] text-dim">
-                esc
-              </kbd>
+              <kbd className="rounded-md bg-fill px-2 py-1 font-sans text-[0.6875rem] font-medium text-fg-2">esc</kbd>
             </div>
 
-            <ul id="palette-listbox" role="listbox" aria-label="Commands" className="max-h-72 overflow-y-auto py-2">
+            <ul
+              id="palette-listbox"
+              role="listbox"
+              aria-label="Results"
+              className="max-h-[22rem] overflow-y-auto border-t border-hairline p-2"
+            >
               {results.length === 0 && (
-                <li className="px-4 py-3 font-mono text-sm text-dim">no matches — 404</li>
+                <li className="px-3 py-4 text-[0.9375rem] text-fg-2">No results for “{query}”.</li>
               )}
-              {results.map((command, i) => (
-                <li
-                  key={command.id}
-                  id={`palette-${command.id}`}
-                  role="option"
-                  aria-selected={i === active}
-                  className={`flex cursor-pointer items-center justify-between gap-4 px-4 py-2.5 font-mono text-sm ${
-                    i === active ? 'bg-raised text-fg' : 'text-muted'
-                  }`}
-                  onMouseMove={(e) => {
-                    if (e.clientX !== lastPointer.current[0] || e.clientY !== lastPointer.current[1]) {
-                      lastPointer.current = [e.clientX, e.clientY]
-                      setActive(i)
-                    }
-                  }}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => run(command)}
-                >
-                  <span>{command.label}</span>
-                  <span className="truncate text-xs text-dim">{command.hint}</span>
-                </li>
-              ))}
+              {results.map((command, i) => {
+                const Icon = command.icon
+                const on = i === active
+                return (
+                  <li
+                    key={command.id}
+                    id={`palette-${command.id}`}
+                    role="option"
+                    aria-selected={on}
+                    className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 ${on ? 'bg-accent text-white' : 'text-fg'}`}
+                    onMouseMove={(e) => {
+                      if (e.clientX !== lastPointer.current[0] || e.clientY !== lastPointer.current[1]) {
+                        lastPointer.current = [e.clientX, e.clientY]
+                        setActive(i)
+                      }
+                    }}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => run(command)}
+                  >
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${on ? 'bg-white/20' : 'bg-fill text-fg-2'}`}
+                    >
+                      <Icon size={14} />
+                    </span>
+                    <span className="text-[0.9375rem] font-medium">{command.label}</span>
+                    <span className={`ml-auto truncate text-[0.8125rem] ${on ? 'text-white/80' : 'text-fg-2'}`}>
+                      {command.hint}
+                    </span>
+                    {command.action.href && <ArrowUpRight size={11} className={on ? 'text-white/80' : 'text-fg-3'} />}
+                  </li>
+                )
+              })}
             </ul>
           </motion.div>
         </motion.div>

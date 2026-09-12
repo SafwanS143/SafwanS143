@@ -1,43 +1,41 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import Ribbon from './components/Ribbon'
 import Nav from './components/Nav'
-import TraceLine from './components/TraceLine'
 import Hero from './components/Hero'
-import Signals from './components/Signals'
+import Highlights from './components/Highlights'
 import Experience from './components/Experience'
+import Fleetwright from './components/Fleetwright'
 import Projects from './components/Projects'
 import About from './components/About'
+import Contact from './components/Contact'
 import Footer from './components/Footer'
 import CommandPalette from './components/CommandPalette'
 
 export default function App() {
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const openPalette = useCallback(() => setPaletteOpen(true), [])
+  const closePalette = useCallback(() => setPaletteOpen(false), [])
 
   return (
-    <div id="top" className="relative min-h-dvh bg-bg text-fg">
+    <div id="top" className="tone-dark">
       <a href="#main" className="skip-link">
-        skip to content
+        Skip to content
       </a>
-      <Nav onOpenPalette={() => setPaletteOpen(true)} />
+      <Ribbon />
+      <Nav onOpenPalette={openPalette} />
 
-      {/* Signature interaction — the scroll-drawn PCB trace layer */}
-      <TraceLine />
+      <main id="main">
+        <Hero />
+        <Highlights />
+        <Experience />
+        <Fleetwright />
+        <Projects />
+        <About />
+        <Contact />
+      </main>
+      <Footer />
 
-      <div className="relative z-10">
-        <main id="main">
-          <Hero />
-          <Signals />
-          <Experience />
-          <Projects />
-          <About />
-        </main>
-        <Footer />
-      </div>
-
-      <CommandPalette
-        open={paletteOpen}
-        onClose={() => setPaletteOpen(false)}
-        onOpen={() => setPaletteOpen(true)}
-      />
+      <CommandPalette open={paletteOpen} onClose={closePalette} onOpen={openPalette} />
     </div>
   )
 }
